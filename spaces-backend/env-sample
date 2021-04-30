@@ -1,0 +1,14 @@
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+
+BUCKET_NAME=bucket_name
+
+APP_URL=http://localhost:3000
+
+# s3: para produção
+# local: em desenvolvimento
+STORAGE_TYPE=s3
+
+# da máquina local
+MONGO_URL=mongodb://user:user@localhost:27017/upload?authSource=admin
