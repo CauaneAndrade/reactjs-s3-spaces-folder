@@ -1,31 +1,23 @@
-require("dotenv").config();
+const express = require('express')
+const morgan = require('morgan')
+const path = require('path')
+const cors = require('cors')
+const verifyToken = require('./validate-token')
 
-const express = require("express");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
-const path = require("path");
-const cors = require("cors");
+const app = express()
 
-const app = express();
+app.use(cors())
+app.use(express.json()) // habilitando para o node conseguir lidar com json
+app.use(express.urlencoded({ extended: true }))
+app.use(morgan('dev'))
+app.use('/files', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads'))) // arquivos acessíveis via url
 
-// Database setup
-mongoose.connect(
-  process.env.MONGO_URL,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-);
+app.use('/user', verifyToken)
+require('./config/database')
 
-app.use(cors());
-app.use(express.json());  // habilitando para o node conseguir lidar com json
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
-app.use(
-  "/files",
-  express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
-);  // arquivos acessíveis via url, testar como fica com diferentes tipos de arquivos
+// routers
+require('./controller/authController')(app)
+require('./controller/postController')(app)
+require('./controller/folderController')(app)
 
-app.use(require("./routes"));
-
-app.listen(3000);
+app.listen(3000)
