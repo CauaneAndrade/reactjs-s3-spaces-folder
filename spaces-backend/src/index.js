@@ -17,7 +17,7 @@ require('./config/database')
 
 // routers
 require('./controller/authController')(app)
-require('./controller/postController')(app)
+require('./controller/fileController')(app)
 require('./controller/folderController')(app)
 
-app.listen(3000)
+app.listen(3001)

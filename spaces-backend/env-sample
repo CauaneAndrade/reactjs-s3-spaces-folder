@@ -3,8 +3,9 @@ AWS_SECRET_ACCESS_KEY=
 AWS_DEFAULT_REGION=us-east-1
 
 BUCKET_NAME=bucket_name
+BUCKET_URL=https://bucket.com
 
-APP_URL=http://localhost:3000
+APP_URL=http://localhost:3001
 
 # s3: para produção
 # local: em desenvolvimento

@@ -6,25 +6,16 @@ const { promisify } = require('util')
 
 const s3 = new aws.S3()
 
-const PostSchema = new mongoose.Schema({
-  path: [{ type: String }],
+const FileSchema = new mongoose.Schema({
   name: String,
-  size: Number,
-  key: String,
-  url: String,
+  isDir: Boolean,
   createdAt: {
     type: Date,
     default: Date.now
   }
 })
 
-PostSchema.pre('save', async function () {
-  if (!this.url) {
-    this.url = `${process.env.APP_URL}/files/${this.key}`
-  }
-})
-
-PostSchema.pre('remove', function () {
+FileSchema.pre('remove', function () {
   if (process.env.STORAGE_TYPE === 's3') {
     return s3
       .deleteObject({
@@ -45,4 +36,4 @@ PostSchema.pre('remove', function () {
   }
 })
 
-module.exports = mongoose.model('Post', PostSchema)
+module.exports = mongoose.model('File', FileSchema)
