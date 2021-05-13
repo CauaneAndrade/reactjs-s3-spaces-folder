@@ -13,7 +13,7 @@ const s3 = new aws.S3();
 
 // listar conteúdos de uma pasta no bucket
 // recebe um path: caminho no bucket que deve ser listado
-router.post("/user/content", async (req, res) => {
+router.post("/user/contenttest", async (req, res) => {
   const loggedUser = await User.findOne({ _id: req.user.id }).exec();
   const userVhost = loggedUser.vhost;
   let path = req.body.path;
@@ -29,11 +29,6 @@ router.post("/user/content", async (req, res) => {
     Prefix: userVhost + "/" + path,
   };
   const data = await s3.listObjects(params).promise();
-  const data2 = {
-    id: "mcd",
-    name: "chonky-sphere-v2.png",
-    thumbnailUrl: "https://chonky.io/chonky-sphere-v2.png",
-  };
   return res.json({ data: getData(path, data, userVhost) }); // [{}]
 });
 
