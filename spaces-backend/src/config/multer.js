@@ -1,3 +1,4 @@
+require("dotenv").config();
 const multer = require('multer')
 const path = require('path')
 const crypto = require('crypto')
@@ -7,8 +8,8 @@ const User = require('../models/User')
 
 const MAX_SIZE_TWO_MEGABYTES = 2 * 1024 * 1024 // tamanho do arquivo
 
-const s3 = new aws.S3()
-// s3.config.update({ endpoint: 'nyc3.digitaloceanspaces.com' })
+var EP = new aws.Endpoint(process.env.BUCKET_URL);
+const s3 = new aws.S3({endpoint: EP});
 
 const multerS3Config = multerS3({
   s3: s3,
