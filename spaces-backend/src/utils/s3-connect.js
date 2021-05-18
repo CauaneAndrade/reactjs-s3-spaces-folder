@@ -1,7 +1,7 @@
 const aws = require("aws-sdk");
 
 var EP = new aws.Endpoint(process.env.BUCKET_URL);
-const s3 = new aws.S3({endpoint: EP});
+const s3 = new aws.S3({ endpoint: EP });
 
 const CommonParam = { Bucket: process.env.BUCKET_NAME };
 
@@ -49,18 +49,15 @@ const checkPathIsValid = async (userVhost, path, fileName) => {
 async function createFileS3(userVhost, file, pathName) {
   const fileName = file.originalname;
   const pathIsValid = await checkPathIsValid(userVhost, pathName, fileName);
-  console.log(pathIsValid)
+  console.log(pathIsValid);
   if (pathIsValid["message"] === "fileCreatedSucced") {
     try {
       await uploadFile(file.buffer, pathName + fileName);
-      console.log('try')
       return true;
     } catch (error) {
-      console.log('erro')
       return false;
     }
   } else {
-    console.log('erro2')
     return false;
   }
 }
@@ -71,15 +68,16 @@ async function createVhostS3(pathHandled) {
   é usado para criar o vhost do usuário quando ele é cadastrado e
   no endpoint de criação de pastas
   */
-  await s3.putObject(
+  const data = await s3.putObject(
     {
       ...CommonParam,
       Key: pathHandled,
     },
     (res) => {
-      console.log(pathHandled);
+      console.log(res);
     }
   );
+  return data;
 }
 
 async function createFolderS3(path, folderName) {
@@ -119,9 +117,10 @@ async function removeContentS3(path, obj) {
   }
   try {
     emptyS3Directory();
-    console.log('aaaaaaaaaaaaaaaaaaaaaaaaa')
-    return true
-  } catch (error) { console.log('bbbbbbbbbbbbbbbbbbbbb'); return false;  }
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 module.exports = {

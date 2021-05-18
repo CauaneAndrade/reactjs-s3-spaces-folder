@@ -33,15 +33,16 @@ async function getUserContentFormat(userVhost) {
     var listFolderName = item["Key"].split("/");
 
     const folderLength = listFolderName.length;
+    const lastElement = folderLength - 1
     var objectPosition = folderLength - 2, isDir = true;
-    if (listFolderName[folderLength - 1] !== "") {
+    if (listFolderName[lastElement] !== "") {
       // se for arquivo e não pasta
-      var objectPosition = folderLength - 1, isDir = false;
+      var objectPosition = lastElement, isDir = false;
     }
 
     // elemento raiz, a pasta máxima do usuário
     const objName = listFolderName[objectPosition];
-    if (listFolderName[folderLength - 1] === '') {
+    if (listFolderName[lastElement] === '') {  // if is a folder
       listFolderName.pop()
       listFolderName.pop()
     } else {
@@ -55,6 +56,7 @@ async function getUserContentFormat(userVhost) {
       childrenIds: [],
       childrenCount: 0,
       parentId: parentId + '/',
+      // thumbnailUrl: 'https://i.imgur.com/gzmHg7n.jpg'
     };
   });
 
