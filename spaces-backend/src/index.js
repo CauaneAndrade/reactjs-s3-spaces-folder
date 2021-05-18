@@ -2,7 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const path = require('path')
 const cors = require('cors')
-const verifyToken = require('./validate-token')
+const verifyToken = require('./utils/validate-login-token')
 
 const app = express()
 
@@ -18,6 +18,5 @@ require('./config/database')
 // routers
 require('./controller/authController')(app)
 require('./controller/fileController')(app)
-require('./controller/folderController')(app)
 
 app.listen(3001)
