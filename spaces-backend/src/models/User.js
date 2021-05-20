@@ -22,7 +22,7 @@ UserSchema.pre("save", async function (next) {
     this.vhost = await crypto.createHash("sha1").update(random).digest("hex");
 
     try {
-      await createVhostS3(this.vhost);
+      await createVhostS3(this.vhost + '/');
     } catch (error) {
       exception();
     }

@@ -8,6 +8,7 @@ const {
   createFileS3,
   createFolderS3,
   removeContentS3,
+  renameItemS3
 } = require("../utils/s3-connect");
 const getUserContentFormat = require("../utils/chonky-data-format");
 
@@ -27,14 +28,22 @@ router.post("/content/file", multer().single("file"), async (req, res) => {
 // upload de pastas para o bucket
 router.post("/content/folder", async (req, res) => {
   const { path, name } = req.body;
-  const response = await createFolderS3(path, name);
-  return res.json({ response });
+  const response = await createFolderS3(path, name, true);
+  return res.json(response);
 });
 
+// deletar arquivo/pasta
 router.delete("/content", async (req, res) => {
   const { path, fileName } = req.body;
   const data = await removeContentS3(path, fileName);
   return res.json({ data });
+});
+
+// alterar nome do arquivo ou pasta
+router.post("/content/update", async (req, res) => {
+  const { path, newName } = req.body;
+  const response = await renameItemS3(path, newName);
+  return res.json({});
 });
 
 module.exports = (app) => app.use("/user", router);

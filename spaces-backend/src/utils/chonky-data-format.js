@@ -1,6 +1,7 @@
 const { getContentsS3 } = require("../utils/s3-connect");
 
-function getChildren(fileMap, initialNameList) {
+function getChildren(fileMap, initialNameList) {  // [ '0d77e6da63f51d627c1ca9dfe7f886c0b2b35c99/pasta1/' ]
+  console.log(fileMap)
   let nameList = [];
   initialNameList.forEach((childId) => {  // pasta1
     for (const [_, value] of Object.entries(fileMap)) {
@@ -17,47 +18,50 @@ function getChildren(fileMap, initialNameList) {
         }
       }
     }
-    getChildren(fileMap, nameList);
+    if (nameList.length) {
+      getChildren(fileMap, nameList);
+    }
   });
   return fileMap;
 }
 
 async function getUserContentFormat(userVhost) {
   const contents = await getContentsS3(userVhost);
-  
+
   const vhost = userVhost + '/'
   var dic = { rootFolderId: vhost, fileMap: {} };
   const fileMap = dic["fileMap"];
-
+  // contents.shift();
   contents.forEach((item) => {
-    var listFolderName = item["Key"].split("/");
-
-    const folderLength = listFolderName.length;
-    const lastElement = folderLength - 1
-    var objectPosition = folderLength - 2, isDir = true;
+    const itemKey = item["Key"]
+    var listFolderName = itemKey.split("/");  // [ '0d77e6da63f51d627c1ca9dfe7f886c0b2b35c99', 'pasta1', '' ]
+    const folderLength = listFolderName.length;  // 3
+    const lastElement = folderLength - 1 // 2
     if (listFolderName[lastElement] !== "") {
       // se for arquivo e não pasta
       var objectPosition = lastElement, isDir = false;
+      var name = listFolderName.pop();
+    } else {
+      listFolderName.pop();  var name = listFolderName.pop()
+      var objectPosition = folderLength - 2; // 1
+      var isDir = true;
     }
 
     // elemento raiz, a pasta máxima do usuário
-    const objName = listFolderName[objectPosition];
-    if (listFolderName[lastElement] === '') {  // if is a folder
-      listFolderName.pop()
-      listFolderName.pop()
-    } else {
-      listFolderName.pop()
-    }
+    const test = listFolderName[objectPosition]  // 1
+    
     const parentId = listFolderName.join('/')
-      fileMap[item["Key"]] = {
-      id: item["Key"],
-      name: objName,
+    fileMap[itemKey] = {
+      id: itemKey,
+      name: name,
       isDir: isDir,
       childrenIds: [],
       childrenCount: 0,
       parentId: parentId + '/',
-      // thumbnailUrl: 'https://i.imgur.com/gzmHg7n.jpg'
     };
+    if (!isDir) {
+      fileMap[itemKey]['thumbnailUrl'] = `${process.env.BUCKET_NAME}.${process.env.BUCKET_URL}${itemKey}`
+    }
   });
 
   let childrenList = [];
